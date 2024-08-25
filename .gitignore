@@ -2,3 +2,4 @@
 *.exe
 *.elf
 *.o
+.vscode/
