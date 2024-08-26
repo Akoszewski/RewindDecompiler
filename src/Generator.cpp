@@ -1,5 +1,6 @@
 #include "Generator.hpp"
 #include "Parser.hpp"
+#include "Analyser.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -25,8 +26,17 @@ std::string Generator::generateFunction(const Function& function)
     std::string type = "int"; // TODO: get from parsing
     std::string typeStr = type.empty() ? "" : type + " ";
     stream << typeStr <<  function.name << "()" << std::endl << "{" << std::endl;
+
+    Analyser analyser;
     for (const auto& instruction : function.instructions)
     {
+        if (analyser.isFromFunctionPrologue(instruction)) {
+            continue;
+        } else if (analyser.isFromFunctionEpilogue(instruction)) {
+            continue;
+        } else if (instruction.operand == "endbr64") {
+            continue;
+        }
         stream << generateInlineAsm(instruction);
     }
     stream << "}" << std::endl << std::endl;

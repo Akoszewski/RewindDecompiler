@@ -1,5 +1,6 @@
 echo "Compiling disassembler"
-g++ -g src/main.cpp src/FileManager.cpp src/Generator.cpp src/Parser.cpp src/Utils.cpp -o bin/rewind.elf || exit -1
+g++ -g src/main.cpp src/FileManager.cpp src/Generator.cpp src/Parser.cpp \
+    src/Utils.cpp src/Analyser.cpp -o bin/rewind.elf || exit -1
 echo "Disassembler compiled"
 
 cd tests
