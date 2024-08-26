@@ -7,6 +7,7 @@
 
 struct Function
 {
+    int address;
     std::string name;
     std::vector<Instruction> instructions;
 };

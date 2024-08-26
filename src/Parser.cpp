@@ -120,7 +120,9 @@ Function Parser::parseFunction(std::pair<int, int> functionBoundary)
         }
         initTempData.argumentsStr.append(tokens[i]);
     }
-
+    if (!function.instructions.empty()) {
+        function.address = function.instructions[0].address;
+    }
     return function;
 }
 
@@ -128,10 +130,12 @@ void Parser::parseAllFunctions(std::vector<std::pair<int, int>> functionBoundari
 {
     for (const auto& boundary : functionBoundaries)
     {
-        functions.push_back(parseFunction(boundary));
+        Function function = parseFunction(boundary);
+        if (!function.instructions.empty()) {
+            functions.push_back(parseFunction(boundary));
+        }
     }
 }
-
 
 std::vector<std::pair<int, int>> Parser::findFunctionBoundaries()
 {
