@@ -1,7 +1,7 @@
-#ifndef GENERATOR_H
-#define GENEATOR_H
+#ifndef GENERATOR_HPP
+#define GENEATOR_HPP
 
-#include  <string>
+#include <string>
 
 class Generator
 {

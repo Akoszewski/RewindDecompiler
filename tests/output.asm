@@ -1,5 +1,5 @@
 
-a.out:     file format elf64-x86-64
+output.elf:     file format elf64-x86-64
 
 
 Disassembly of section .init:
@@ -27,7 +27,7 @@ Disassembly of section .text:
     1032:	54                   	push   rsp
     1033:	45 31 c0             	xor    r8d,r8d
     1036:	31 c9                	xor    ecx,ecx
-    1038:	48 8d 3d ee 00 00 00 	lea    rdi,[rip+0xee]        # 112d <main>
+    1038:	48 8d 3d f4 00 00 00 	lea    rdi,[rip+0xf4]        # 1133 <main>
     103f:	ff 15 7b 2f 00 00    	call   QWORD PTR [rip+0x2f7b]        # 3fc0 <__libc_start_main@GLIBC_2.34>
     1045:	f4                   	hlt
     1046:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
@@ -85,28 +85,36 @@ Disassembly of section .text:
 0000000000001119 <function1>:
     1119:	55                   	push   rbp
     111a:	48 89 e5             	mov    rbp,rsp
-    111d:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi
-    1120:	89 75 f8             	mov    DWORD PTR [rbp-0x8],esi
-    1123:	8b 55 fc             	mov    edx,DWORD PTR [rbp-0x4]
-    1126:	8b 45 f8             	mov    eax,DWORD PTR [rbp-0x8]
-    1129:	01 d0                	add    eax,edx
-    112b:	5d                   	pop    rbp
-    112c:	c3                   	ret
+    111d:	55                   	push   rbp
+    111e:	48 89 e5             	mov    rbp,rsp
+    1121:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi
+    1124:	89 75 f8             	mov    DWORD PTR [rbp-0x8],esi
+    1127:	8b 55 fc             	mov    edx,DWORD PTR [rbp-0x4]
+    112a:	8b 45 f8             	mov    eax,DWORD PTR [rbp-0x8]
+    112d:	01 d0                	add    eax,edx
+    112f:	5d                   	pop    rbp
+    1130:	90                   	nop
+    1131:	5d                   	pop    rbp
+    1132:	c3                   	ret
 
-000000000000112d <main>:
-    112d:	55                   	push   rbp
-    112e:	48 89 e5             	mov    rbp,rsp
-    1131:	be 02 00 00 00       	mov    esi,0x2
-    1136:	bf 05 00 00 00       	mov    edi,0x5
-    113b:	e8 d9 ff ff ff       	call   1119 <function1>
-    1140:	b8 00 00 00 00       	mov    eax,0x0
-    1145:	5d                   	pop    rbp
-    1146:	c3                   	ret
+0000000000001133 <main>:
+    1133:	55                   	push   rbp
+    1134:	48 89 e5             	mov    rbp,rsp
+    1137:	55                   	push   rbp
+    1138:	48 89 e5             	mov    rbp,rsp
+    113b:	be 02 00 00 00       	mov    esi,0x2
+    1140:	bf 05 00 00 00       	mov    edi,0x5
+    1145:	e8 15 f3 ff ff       	call   45f <_init-0xba1>
+    114a:	b8 00 00 00 00       	mov    eax,0x0
+    114f:	5d                   	pop    rbp
+    1150:	b8 00 00 00 00       	mov    eax,0x0
+    1155:	5d                   	pop    rbp
+    1156:	c3                   	ret
 
 Disassembly of section .fini:
 
-0000000000001148 <_fini>:
-    1148:	f3 0f 1e fa          	endbr64
-    114c:	48 83 ec 08          	sub    rsp,0x8
-    1150:	48 83 c4 08          	add    rsp,0x8
-    1154:	c3                   	ret
+0000000000001158 <_fini>:
+    1158:	f3 0f 1e fa          	endbr64
+    115c:	48 83 ec 08          	sub    rsp,0x8
+    1160:	48 83 c4 08          	add    rsp,0x8
+    1164:	c3                   	ret
