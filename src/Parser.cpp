@@ -4,7 +4,15 @@
 #include <sstream>
 #include <iostream>
 
-Parser::Parser(std::string asmCode)
+Parser::Parser(){}
+
+Parser& Parser::getInstance()
+{
+    static Parser instance;
+    return instance;
+}
+
+void Parser::Tokenize(const std::string& asmCode)
 {
     std::istringstream stream(asmCode);
     std::string line;
@@ -104,7 +112,7 @@ Function Parser::parseFunction(std::pair<int, int> functionBoundary)
             continue;
         }
 
-        if (!initTempData.isHexBytesPassed && isHexByte(tokens[i])) {
+        if (!initTempData.isHexBytesPassed && isHexByteWithNoPrefix(tokens[i])) {
             continue;
         }
         initTempData.isHexBytesPassed = true;

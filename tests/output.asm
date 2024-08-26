@@ -99,8 +99,8 @@ Disassembly of section .text:
     112f:	48 89 e5             	mov    rbp,rsp
     1132:	be 02 00 00 00       	mov    esi,0x2
     1137:	bf 05 00 00 00       	mov    edi,0x5
-    113c:	e8 d8 ff ff ff       	call   1119 <function1>
-    1141:	b8 00 00 00 00       	mov    eax,0x0
+    113c:	b8 00 00 00 00       	mov    eax,0x0
+    1141:	e8 d3 ff ff ff       	call   1119 <function1>
     1146:	b8 00 00 00 00       	mov    eax,0x0
     114b:	5d                   	pop    rbp
     114c:	c3                   	ret

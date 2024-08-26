@@ -1,16 +1,16 @@
-echo "Compiling disassembler"
+echo "Compiling decompiler"
 g++ -g src/main.cpp src/FileManager.cpp src/Generator.cpp src/Parser.cpp \
     src/Utils.cpp src/Analyser.cpp -o bin/rewind.elf || exit -1
-echo "Disassembler compiled"
+echo "Decompiler compiled"
 
 cd tests
 
 gcc -O0 testcode-simple-fun.c || exit -1
 objdump -M intel -d a.out > a.asm
 
-echo "Disassembling file"
+echo "Decompiling file"
 ../bin/rewind.elf a.asm
-echo "Compiling disassembled file"
+echo "Compiling decompiled file"
 gcc -masm=intel -g -O0 output.c -o output.elf || exit -1
 echo "Launching recompiled file"
 ./output.elf

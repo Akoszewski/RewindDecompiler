@@ -11,7 +11,7 @@ int main()
 {
 	asm("mov esi, 0x2");
 	asm("mov edi, 0x5");
-	asm("call 0x1119");
-	asm("mov eax, 0x0");
+	function1();
+	return 0;
 }
 

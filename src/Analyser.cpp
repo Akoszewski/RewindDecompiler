@@ -1,4 +1,7 @@
 #include "Analyser.hpp"
+#include "Parser.hpp"
+
+#include <iostream>
 
 bool Analyser::isFromFunctionPrologue(const Instruction& instruction)
 {
@@ -16,14 +19,24 @@ bool Analyser::isFromFunctionPrologue(const Instruction& instruction)
     return false;
 }
 
-bool Analyser::isFromFunctionEpilogue(const Instruction& instruction)
+bool Analyser::isFromFunctionEpilogueExceptRet(const Instruction& instruction)
 {
     if (instruction.operand == "pop") {
         if (instruction.arguments[0] == "rbp" || instruction.arguments[0] == "ebp") {
             return true;
         }
-    } else if (instruction.operand == "ret") {
-        return true;
     }
     return false;
+}
+
+std::optional<Function> Analyser::findFunctionWithAddress(int address)
+{
+    std::optional<Function> result;
+    for (const auto& f : Parser::getInstance().functions)
+    {
+        if (f.address == address) {
+            result = std::optional(f);
+        }
+    }
+    return result;
 }
