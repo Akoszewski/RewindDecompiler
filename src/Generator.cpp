@@ -24,7 +24,7 @@ std::string Generator::generateCodeFromAsm(std::string objdumpAsmCode)
                 if (i > 0) {
                     stream << ",";
                 }
-                stream << " " << instruction.arguments[i];
+                stream << " " << std::dec << instruction.arguments[i];
             }
             stream << "\");" << std::endl;
         }
