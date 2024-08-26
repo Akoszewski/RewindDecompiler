@@ -1,4 +1,5 @@
 #include "Parser.hpp"
+#include "Utils.hpp"
 
 #include <sstream>
 #include <iostream>
@@ -30,24 +31,6 @@ std::string Parser::generateFunctionNameFromUnstripped(int startTokenNumber)
     return tokens[startTokenNumber].substr(1, tokens[startTokenNumber].size() - 3);
 }
 
-bool isHexByte(const std::string& str)
-{
-    if (str.size() == 2) {
-        if (std::isxdigit(str[0]) && std::isxdigit(str[1])) {
-            return true;
-        }
-    }
-    return false;
-}
-
-struct InstructionInitializationTempData
-{
-    bool isAddressInitialized = false;
-    bool isHexBytesPassed = false;
-    bool isOperandRead = false;
-    std::string argumentsStr;
-};
-
 void clearInstructionInitializationTempData(InstructionInitializationTempData& initTempData)
 {
     initTempData.isAddressInitialized = false;
@@ -65,11 +48,13 @@ std::vector<std::string> parseInstructionArgumentString(std::string argumentStri
         if (argumentString[i] != ',') {
             argument += argumentString[i];
         } else {
+            fixHexArgumentPrefix(argument);
             arguments.push_back(argument);
             argument.clear();
         }
     }
     if (!argument.empty()) {
+        fixHexArgumentPrefix(argument);
         arguments.push_back(argument);
     }
     return arguments;
@@ -90,7 +75,7 @@ Function Parser::parseFunction(std::pair<int, int> functionBoundary)
     InstructionInitializationTempData initTempData;
     std::vector<std::string> arguments;
 
-    for (int i = functionBoundary.first + 1; i < functionBoundary.second; i++)
+    for (int i = functionBoundary.first + 1; i <= functionBoundary.second; i++)
     {
         if (tokens[i] == "\n") {
             finalizeInstructionInitialization(instruction, initTempData);

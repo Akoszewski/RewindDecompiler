@@ -1,15 +1,17 @@
 #ifndef GENERATOR_HPP
 #define GENEATOR_HPP
 
+#include "Function.hpp"
+
 #include <string>
 
 class Generator
 {
 public:
-    std::string generateCodeFromAsm(std::string objdumpAsmCode);
+    std::string generateCodeFromAsm(const std::string& objdumpAsmCode);
 private:
-    std::string generateInstruction();
-    std::string generateFunction();
+    std::string generateInlineAsm(const Instruction& instruction);
+    std::string generateFunction(const Function& function);
 };
 
 #endif

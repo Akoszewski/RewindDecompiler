@@ -4,6 +4,14 @@
 #include <string>
 #include <vector>
 
+struct InstructionInitializationTempData
+{
+    bool isAddressInitialized = false;
+    bool isHexBytesPassed = false;
+    bool isOperandRead = false;
+    std::string argumentsStr;
+};
+
 struct Instruction
 {
     int address;
