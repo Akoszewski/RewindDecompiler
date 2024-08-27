@@ -1,5 +1,5 @@
 echo "Compiling decompiler"
-g++ -g src/main.cpp src/FileManager.cpp src/Generator.cpp src/Parser.cpp \
+g++ -g -fsanitize=address src/main.cpp src/FileManager.cpp src/Generator.cpp src/Parser.cpp \
     src/Utils.cpp src/Analyser.cpp  -o bin/rewind.elf || exit -1
 echo "Decompiler compiled"
 

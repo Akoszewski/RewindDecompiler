@@ -34,9 +34,12 @@ std::string Generator::generateFunction(const Function& function)
     std::stringstream stream;
     std::string type = "int"; // TODO: get from parsing
     std::string typeStr = type.empty() ? "" : type + " ";
-    stream << typeStr <<  function.name << "()" << std::endl << "{" << std::endl;
 
     Analyser analyser;
+
+    stream << typeStr <<  function.name << "()\t// "
+            << function.parameters.size() << " parameters\n" << "{" << std::endl;
+
     for (const auto& instruction : function.instructions)
     {
         if (analyser.isFromFunctionPrologue(instruction)) {
@@ -47,14 +50,14 @@ std::string Generator::generateFunction(const Function& function)
             continue;
         } else if (instruction.operand == "mov") {
             if (instruction.arguments[0] == "eax" && isNumber(instruction.arguments[1])) {
-                analyser.rax.status = RegStatus::IsKnownNumber;
-                analyser.rax.value = std::stoi(instruction.arguments[1]);
+                analyser.registerMap["rax"].status = RegStatus::IsKnownNumber;
+                analyser.registerMap["rax"].value = std::stoi(instruction.arguments[1]);
             } else {
                 stream << generateInlineAsm(instruction);
             }
         } else if (instruction.operand == "ret") {
-            if (analyser.rax.status == RegStatus::IsKnownNumber) {
-                stream << "\treturn " << analyser.rax.value << ";" << std::endl;
+            if (analyser.registerMap["rax"].status == RegStatus::IsKnownNumber) {
+                stream << "\treturn " << analyser.registerMap["rax"].value << ";" << std::endl;
             }
         } else if (instruction.operand == "call" && isHexNumberWithPrefix(instruction.arguments[0])) {
             std::size_t pos = 2;

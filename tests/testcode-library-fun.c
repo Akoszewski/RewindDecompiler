@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int function1(int a, unsigned b)
+int function1(int a, char b)
 {
     return a-b;
 }

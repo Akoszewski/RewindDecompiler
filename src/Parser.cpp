@@ -1,5 +1,6 @@
 #include "Parser.hpp"
 #include "Utils.hpp"
+#include "Analyser.hpp"
 
 #include <sstream>
 #include <iostream>
@@ -152,6 +153,10 @@ Function Parser::parseFunction(std::pair<int, int> functionBoundary)
     if (!function.instructions.empty()) {
         function.address = function.instructions[0].address;
     }
+
+    Analyser analyser;
+    analyser.initFunctionParameters(function);
+
     return function;
 }
 

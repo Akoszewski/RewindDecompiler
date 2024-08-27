@@ -39,7 +39,7 @@ Disassembly of section .text:
     1052:	54                   	push   rsp
     1053:	45 31 c0             	xor    r8d,r8d
     1056:	31 c9                	xor    ecx,ecx
-    1058:	48 8d 3d ed 00 00 00 	lea    rdi,[rip+0xed]        # 114c <main>
+    1058:	48 8d 3d f4 00 00 00 	lea    rdi,[rip+0xf4]        # 1153 <main>
     105f:	ff 15 5b 2f 00 00    	call   QWORD PTR [rip+0x2f5b]        # 3fc0 <__libc_start_main@GLIBC_2.34>
     1065:	f4                   	hlt
     1066:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
@@ -98,31 +98,34 @@ Disassembly of section .text:
     1139:	55                   	push   rbp
     113a:	48 89 e5             	mov    rbp,rsp
     113d:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi
-    1140:	89 75 f8             	mov    DWORD PTR [rbp-0x8],esi
-    1143:	8b 45 fc             	mov    eax,DWORD PTR [rbp-0x4]
-    1146:	2b 45 f8             	sub    eax,DWORD PTR [rbp-0x8]
-    1149:	90                   	nop
-    114a:	5d                   	pop    rbp
-    114b:	c3                   	ret
+    1140:	89 f0                	mov    eax,esi
+    1142:	88 45 f8             	mov    BYTE PTR [rbp-0x8],al
+    1145:	0f be 45 f8          	movsx  eax,BYTE PTR [rbp-0x8]
+    1149:	8b 55 fc             	mov    edx,DWORD PTR [rbp-0x4]
+    114c:	29 c2                	sub    edx,eax
+    114e:	89 d0                	mov    eax,edx
+    1150:	90                   	nop
+    1151:	5d                   	pop    rbp
+    1152:	c3                   	ret
 
-000000000000114c <main>:
-    114c:	55                   	push   rbp
-    114d:	48 89 e5             	mov    rbp,rsp
-    1150:	be 05 00 00 00       	mov    esi,0x5
-    1155:	bf 02 00 00 00       	mov    edi,0x2
-    115a:	b8 00 00 00 00       	mov    eax,0x0
-    115f:	e8 d5 ff ff ff       	call   1139 <function1>
-    1164:	48 8d 05 9f 0e 00 00 	lea    rax,[rip+0xe9f]        # 200a <__GNU_EH_FRAME_HDR+0x6>
-    116b:	48 89 c7             	mov    rdi,rax
-    116e:	e8 bd fe ff ff       	call   1030 <puts@plt>
-    1173:	b8 00 00 00 00       	mov    eax,0x0
-    1178:	5d                   	pop    rbp
-    1179:	c3                   	ret
+0000000000001153 <main>:
+    1153:	55                   	push   rbp
+    1154:	48 89 e5             	mov    rbp,rsp
+    1157:	be 05 00 00 00       	mov    esi,0x5
+    115c:	bf 02 00 00 00       	mov    edi,0x2
+    1161:	b8 00 00 00 00       	mov    eax,0x0
+    1166:	e8 ce ff ff ff       	call   1139 <function1>
+    116b:	48 8d 05 98 0e 00 00 	lea    rax,[rip+0xe98]        # 200a <__GNU_EH_FRAME_HDR+0x6>
+    1172:	48 89 c7             	mov    rdi,rax
+    1175:	e8 b6 fe ff ff       	call   1030 <puts@plt>
+    117a:	b8 00 00 00 00       	mov    eax,0x0
+    117f:	5d                   	pop    rbp
+    1180:	c3                   	ret
 
 Disassembly of section .fini:
 
-000000000000117c <_fini>:
-    117c:	f3 0f 1e fa          	endbr64
-    1180:	48 83 ec 08          	sub    rsp,0x8
-    1184:	48 83 c4 08          	add    rsp,0x8
-    1188:	c3                   	ret
+0000000000001184 <_fini>:
+    1184:	f3 0f 1e fa          	endbr64
+    1188:	48 83 ec 08          	sub    rsp,0x8
+    118c:	48 83 c4 08          	add    rsp,0x8
+    1190:	c3                   	ret

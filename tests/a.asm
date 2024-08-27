@@ -39,7 +39,7 @@ Disassembly of section .text:
     1052:	54                   	push   rsp
     1053:	45 31 c0             	xor    r8d,r8d
     1056:	31 c9                	xor    ecx,ecx
-    1058:	48 8d 3d ec 00 00 00 	lea    rdi,[rip+0xec]        # 114b <main>
+    1058:	48 8d 3d f3 00 00 00 	lea    rdi,[rip+0xf3]        # 1152 <main>
     105f:	ff 15 5b 2f 00 00    	call   QWORD PTR [rip+0x2f5b]        # 3fc0 <__libc_start_main@GLIBC_2.34>
     1065:	f4                   	hlt
     1066:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
@@ -98,29 +98,32 @@ Disassembly of section .text:
     1139:	55                   	push   rbp
     113a:	48 89 e5             	mov    rbp,rsp
     113d:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi
-    1140:	89 75 f8             	mov    DWORD PTR [rbp-0x8],esi
-    1143:	8b 45 fc             	mov    eax,DWORD PTR [rbp-0x4]
-    1146:	2b 45 f8             	sub    eax,DWORD PTR [rbp-0x8]
-    1149:	5d                   	pop    rbp
-    114a:	c3                   	ret
+    1140:	89 f0                	mov    eax,esi
+    1142:	88 45 f8             	mov    BYTE PTR [rbp-0x8],al
+    1145:	0f be 45 f8          	movsx  eax,BYTE PTR [rbp-0x8]
+    1149:	8b 55 fc             	mov    edx,DWORD PTR [rbp-0x4]
+    114c:	29 c2                	sub    edx,eax
+    114e:	89 d0                	mov    eax,edx
+    1150:	5d                   	pop    rbp
+    1151:	c3                   	ret
 
-000000000000114b <main>:
-    114b:	55                   	push   rbp
-    114c:	48 89 e5             	mov    rbp,rsp
-    114f:	be 05 00 00 00       	mov    esi,0x5
-    1154:	bf 02 00 00 00       	mov    edi,0x2
-    1159:	e8 db ff ff ff       	call   1139 <function1>
-    115e:	48 8d 05 9f 0e 00 00 	lea    rax,[rip+0xe9f]        # 2004 <_IO_stdin_used+0x4>
-    1165:	48 89 c7             	mov    rdi,rax
-    1168:	e8 c3 fe ff ff       	call   1030 <puts@plt>
-    116d:	b8 00 00 00 00       	mov    eax,0x0
-    1172:	5d                   	pop    rbp
-    1173:	c3                   	ret
+0000000000001152 <main>:
+    1152:	55                   	push   rbp
+    1153:	48 89 e5             	mov    rbp,rsp
+    1156:	be 05 00 00 00       	mov    esi,0x5
+    115b:	bf 02 00 00 00       	mov    edi,0x2
+    1160:	e8 d4 ff ff ff       	call   1139 <function1>
+    1165:	48 8d 05 98 0e 00 00 	lea    rax,[rip+0xe98]        # 2004 <_IO_stdin_used+0x4>
+    116c:	48 89 c7             	mov    rdi,rax
+    116f:	e8 bc fe ff ff       	call   1030 <puts@plt>
+    1174:	b8 00 00 00 00       	mov    eax,0x0
+    1179:	5d                   	pop    rbp
+    117a:	c3                   	ret
 
 Disassembly of section .fini:
 
-0000000000001174 <_fini>:
-    1174:	f3 0f 1e fa          	endbr64
-    1178:	48 83 ec 08          	sub    rsp,0x8
-    117c:	48 83 c4 08          	add    rsp,0x8
-    1180:	c3                   	ret
+000000000000117c <_fini>:
+    117c:	f3 0f 1e fa          	endbr64
+    1180:	48 83 ec 08          	sub    rsp,0x8
+    1184:	48 83 c4 08          	add    rsp,0x8
+    1188:	c3                   	ret
