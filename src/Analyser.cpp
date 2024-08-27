@@ -26,6 +26,9 @@ bool Analyser::isFromFunctionEpilogueExceptRet(const Instruction& instruction)
             return true;
         }
     }
+    if (instruction.operand == "leave") {
+        return true;
+    }
     return false;
 }
 

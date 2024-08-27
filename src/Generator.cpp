@@ -21,6 +21,14 @@ std::string Generator::generateInlineAsm(const Instruction& instruction)
     return stream.str();
 }
 
+std::string generateExternalFunctionDeclaration(const Function& function)
+{
+    std::stringstream stream;
+    std::string type = "int"; // TODO: get from parsing
+    stream << type << " " << function.name << "();\n\n";
+    return stream.str();
+}
+
 std::string Generator::generateFunction(const Function& function)
 {
     std::stringstream stream;
@@ -46,7 +54,7 @@ std::string Generator::generateFunction(const Function& function)
             }
         } else if (instruction.operand == "ret") {
             if (analyser.rax.status == RegStatus::IsKnownNumber) {
-                stream << "\treturn " << analyser.rax.value << ";\n";
+                stream << "\treturn " << analyser.rax.value << ";" << std::endl;
             }
         } else if (instruction.operand == "call" && isHexNumberWithPrefix(instruction.arguments[0])) {
             std::size_t pos = 2;
@@ -74,7 +82,11 @@ std::string Generator::generateCodeFromAsm(const std::string& objdumpAsmCode)
     std::stringstream stream;
     for (const auto& function : Parser::getInstance().functions)
     {
-        stream << generateFunction(function);
+        if (function.isDllTrampoline) {
+            stream << generateExternalFunctionDeclaration(function);
+        } else {
+            stream << generateFunction(function);
+        }
     }
     return stream.str();
 }

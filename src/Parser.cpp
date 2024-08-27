@@ -39,6 +39,11 @@ std::string Parser::generateFunctionNameFromUnstripped(int startTokenNumber)
     return tokens[startTokenNumber].substr(1, tokens[startTokenNumber].size() - 3);
 }
 
+bool Parser::detectDllTrampoline(int startTokenNumber)
+{
+    return tokens[startTokenNumber].find('@') != std::string::npos;
+}
+
 void clearInstructionInitializationTempData(InstructionInitializationTempData& initTempData)
 {
     initTempData.isAddressInitialized = false;
@@ -74,10 +79,26 @@ void finalizeInstructionInitialization(Instruction& instruction, InstructionInit
     clearInstructionInitializationTempData(initTempData);
 }
 
+void fixDllFunctionName(Function& function)
+{
+    std::size_t pos = function.name.find('@');
+    if (pos != std::string::npos) {
+        function.name.erase(pos);
+    }
+}
+
 Function Parser::parseFunction(std::pair<int, int> functionBoundary)
 {
     Function function;
     function.name = generateFunctionName(functionBoundary.first);
+
+    function.isDllTrampoline = detectDllTrampoline(functionBoundary.first);
+    if (function.isDllTrampoline) {
+        fixDllFunctionName(function);
+        std::size_t pos = 0;
+        function.address = std::stoi(tokens[functionBoundary.first + 2], &pos, 16);
+        return function;
+    }
 
     Instruction instruction;
     InstructionInitializationTempData initTempData;
@@ -134,13 +155,29 @@ Function Parser::parseFunction(std::pair<int, int> functionBoundary)
     return function;
 }
 
+std::optional<Function> Parser::findFunctionWithName(const std::string& name)
+{
+    std::optional<Function> functionOptional;
+    for (const auto& f : functions)
+    {
+        if (f.name == name) {
+            return std::optional(f);
+        }
+    }
+    return functionOptional;
+}
+
 void Parser::parseAllFunctions(std::vector<std::pair<int, int>> functionBoundaries)
 {
     for (const auto& boundary : functionBoundaries)
     {
         Function function = parseFunction(boundary);
-        if (!function.instructions.empty()) {
-            functions.push_back(parseFunction(boundary));
+        if (function.isDllTrampoline) {
+            functions.push_back(function);
+        } else {
+            if (!function.instructions.empty()) {
+                functions.push_back(function);
+            }
         }
     }
 }
@@ -160,7 +197,7 @@ std::vector<std::pair<int, int>> Parser::findFunctionBoundariesInNonStripped()
     for (int i = 0; i < tokens.size(); i++)
     {
         if (tokens[i][0] == '<' && tokens[i][tokens[i].size() - 2] == '>' && tokens[i][tokens[i].size() - 1] == ':') {
-            if (tokens[i][1] != '_') {
+            if (tokens[i][1] != '_' && tokens[i].find("@plt-") == std::string::npos) {
                 startTokenNumber = i;
             }
         }
