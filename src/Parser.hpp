@@ -19,7 +19,7 @@ public:
     std::optional<Function> findFunctionWithName(const std::string& name);
     std::vector<Function> functions;
 private:
-    Parser();
+    Parser() = default;
     std::vector<std::pair<int, int>> findFunctionBoundariesInNonStripped();
     std::string generateFunctionName(int startTokenNumber);
     std::string generateFunctionNameFromUnstripped(int startTokenNumber);

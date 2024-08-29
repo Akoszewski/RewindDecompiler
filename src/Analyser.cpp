@@ -7,45 +7,58 @@
 Analyser::Analyser()
 {
     parameterRegisters = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
-    registerMap = {
-        {"rax", Register("eax", "ax", "al", "ah")},
-        {"rbx", Register("ebx", "bx", "bl", "bh")},
-        {"rcx", Register("ecx", "cx", "cl", "ch")},
-        {"rdx", Register("edx", "dx", "dl", "dh")},
-        {"rdi", Register("edi", "di", "dil", "")},
-        {"rsi", Register("esi", "si", "sil", "")},
-        {"rbp", Register("ebp", "bp", "bpl", "")},
-        {"rsp", Register("esp", "sp", "spl", "")},
-        {"r8",  Register("r8d", "r8w", "r8b", "")},
-        {"r9",  Register("r9d", "r9w", "r9b", "")},
-        {"r10", Register("r10d", "r10w", "r10b", "")},
-        {"r11", Register("r11d", "r11w", "r11b", "")},
-        {"r12", Register("r12d", "r12w", "r12b", "")},
-        {"r13", Register("r13d", "r13w", "r13b", "")},
-        {"r14", Register("r14d", "r14w", "r14b", "")},
-        {"r15", Register("r15d", "r15w", "r15b", "")},
+
+    sizeToTypeMap = {
+        {1, "char"},
+        {2, "short"},
+        {4, "int"},
+        {8, "long long"},
     };
+
+    registerMap = {
+        {"rax", Register(8, "rax", "eax", "ax", "al", "ah")},
+        {"rbx", Register(8, "rbx", "ebx", "bx", "bl", "bh")},
+        {"rcx", Register(8, "rcx", "ecx", "cx", "cl", "ch")},
+        {"rdx", Register(8, "rdx", "edx", "dx", "dl", "dh")},
+        {"rdi", Register(8, "rdi", "edi", "di", "dil", "")},
+        {"rsi", Register(8, "rsi", "esi", "si", "sil", "")},
+        {"rbp", Register(8, "rbp", "ebp", "bp", "bpl", "")},
+        {"rsp", Register(8, "rsp", "esp", "sp", "spl", "")},
+        {"r8",  Register(8, "r8", "r8d", "r8w", "r8b", "")},
+        {"r9",  Register(8, "r9", "r9d", "r9w", "r9b", "")},
+        {"r10", Register(8, "r10", "r10d", "r10w", "r10b", "")},
+        {"r11", Register(8, "r11", "r11d", "r11w", "r11b", "")},
+        {"r12", Register(8, "r12", "r12d", "r12w", "r12b", "")},
+        {"r13", Register(8, "r13", "r13d", "r13w", "r13b", "")},
+        {"r14", Register(8, "r14", "r14d", "r14w", "r14b", "")},
+        {"r15", Register(8, "r15", "r15d", "r15w", "r15b", "")}
+    };
+    for (const auto& regRecord : registerMap)
+    {
+        auto qwVerName = regRecord.second.qwordVersionName;
+        auto dwVerName = regRecord.second.dwordVersionName;
+        auto wVerName = regRecord.second.wordVersionName;
+        auto bVerName = regRecord.second.byteVersionName;
+        auto hbVerName = regRecord.second.highByteVersionName;
+
+        registerMap[regRecord.second.dwordVersionName] =
+                Register(4, qwVerName, dwVerName, wVerName, bVerName, hbVerName);
+
+        registerMap[regRecord.second.wordVersionName] =
+                Register(2, qwVerName, dwVerName, wVerName, bVerName, hbVerName);
+
+        registerMap[regRecord.second.byteVersionName] =
+                Register(1, qwVerName, dwVerName, wVerName, bVerName, hbVerName);
+
+        registerMap[regRecord.second.highByteVersionName] =
+                Register(1, qwVerName, dwVerName, wVerName, bVerName, hbVerName);
+    }
 }
 
 std::string Analyser::getParentRegisterName(const std::string& regName)
 {
-    for (const auto& registerRecord : registerMap)
-    {
-        if (registerRecord.first == regName) {
-            return registerRecord.first;
-        }
-        if (registerRecord.second.dwordVersionName == regName) {
-            return registerRecord.first;
-        }
-        else if (registerRecord.second.wordVersionName == regName) {
-            return registerRecord.first;
-        }
-        else if (registerRecord.second.byteVersionName == regName) {
-            return registerRecord.first;
-        }
-        else if (registerRecord.second.highByteVersionName == regName) {
-            return registerRecord.first;
-        }
+    if (registerMap.find(regName) != registerMap.end()) {
+        return registerMap[regName].qwordVersionName;
     }
     return std::string{};
 }
@@ -123,7 +136,8 @@ void Analyser::initFunctionParameters(Function& function)
         if (instr.operand == "mov") {
             if (isParameterRegister(instr.arguments[1])) {
                 if (!registerMap[getParentRegisterName(instr.arguments[1])].wasChanged) {
-                    function.parameters.push_back(Variable{"int", "arg" + parameterCounter}); // TODO: find also a type
+                    std::string type = sizeToTypeMap[registerMap[instr.arguments[1]].byteSize];
+                    function.parameters.push_back(Variable{type, std::string("arg") + std::to_string(parameterCounter)});
                     parameterCounter++;
                 }
             }

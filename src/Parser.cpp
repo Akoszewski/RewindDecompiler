@@ -5,8 +5,6 @@
 #include <sstream>
 #include <iostream>
 
-Parser::Parser(){}
-
 Parser& Parser::getInstance()
 {
     static Parser instance;
@@ -156,6 +154,7 @@ Function Parser::parseFunction(std::pair<int, int> functionBoundary)
 
     Analyser analyser;
     analyser.initFunctionParameters(function);
+    function.type = "int"; // TODO: get from analysis
 
     return function;
 }

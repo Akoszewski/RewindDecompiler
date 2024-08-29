@@ -29,16 +29,33 @@ std::string generateExternalFunctionDeclaration(const Function& function)
     return stream.str();
 }
 
+std::string Generator::generateFunctionDefinitionHead(const Function& function)
+{
+    std::stringstream stream;
+
+    stream << function.type << " " <<  function.name << "(";
+    bool isFirst = true;
+    for (const auto& param : function.parameters)
+    {
+        if (isFirst) {
+            stream << param.type << " " << param.name;
+            isFirst = false;
+        } else {
+            stream << ", " << param.type << " " << param.name;
+        }
+    }
+    stream << ")\n{\n";
+
+    return stream.str();
+}
+
 std::string Generator::generateFunction(const Function& function)
 {
     std::stringstream stream;
-    std::string type = "int"; // TODO: get from parsing
-    std::string typeStr = type.empty() ? "" : type + " ";
+
+    stream << generateFunctionDefinitionHead(function);
 
     Analyser analyser;
-
-    stream << typeStr <<  function.name << "()\t// "
-            << function.parameters.size() << " parameters\n" << "{" << std::endl;
 
     for (const auto& instruction : function.instructions)
     {

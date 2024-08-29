@@ -9,6 +9,7 @@
 struct Function
 {
     int address;
+    std::string type;
     std::string name;
     std::vector<Instruction> instructions;
     std::vector<Variable> parameters;

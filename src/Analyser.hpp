@@ -18,14 +18,18 @@ struct Register
     RegStatus status = RegStatus::Unknown;
     long long value = 0;
     bool wasChanged = false;
+    unsigned char byteSize;
+    std::string qwordVersionName;
     std::string dwordVersionName;
     std::string wordVersionName;
     std::string byteVersionName;
     std::string highByteVersionName;
     Register() = default;
-    Register(const std::string& dwVersionName, const std::string& wVersionName,
+    Register(int size, const std::string& qwVersionName, const std::string& dwVersionName, const std::string& wVersionName,
                 const std::string& bVersionName, const std::string& hbVersionName)
-      : dwordVersionName(dwVersionName)
+      : byteSize(size)
+      , qwordVersionName(qwVersionName)
+      , dwordVersionName(dwVersionName)
       , wordVersionName(wVersionName)
       , byteVersionName(bVersionName)
       , highByteVersionName(hbVersionName)
@@ -44,6 +48,7 @@ public:
     bool isParameterRegister(const std::string& regName);
     std::map<std::string, Register> registerMap;
     std::vector<std::string> parameterRegisters;
+    std::map<unsigned char, std::string> sizeToTypeMap;
 };
 
 #endif

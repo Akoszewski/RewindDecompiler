@@ -12,6 +12,7 @@ public:
 private:
     std::string generateInlineAsm(const Instruction& instruction);
     std::string generateFunction(const Function& function);
+    std::string generateFunctionDefinitionHead(const Function& function);
 };
 
 #endif

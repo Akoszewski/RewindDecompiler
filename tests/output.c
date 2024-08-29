@@ -1,6 +1,6 @@
 int puts();
 
-int function1()	// 2 parameters
+int function1(int arg1, int arg2)
 {
 	asm("mov DWORD PTR [rbp-0x4], edi");
 	asm("mov eax, esi");
@@ -11,7 +11,7 @@ int function1()	// 2 parameters
 	asm("mov eax, edx");
 }
 
-int main()	// 0 parameters
+int main()
 {
 	asm("mov esi, 0x5");
 	asm("mov edi, 0x2");
