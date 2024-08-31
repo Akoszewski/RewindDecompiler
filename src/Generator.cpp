@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 std::string Generator::generateInlineAsm(const Instruction& instruction)
 {
@@ -49,6 +50,29 @@ std::string Generator::generateFunctionDefinitionHead(const Function& function)
     return stream.str();
 }
 
+std::string Generator::generateFunctionCall(const Function& function, std::vector<std::string> params)
+{
+    std::stringstream stream;
+
+    std::reverse(params.begin(), params.end());
+
+    stream << "\t" << function.name << "(";
+    bool isFirst = true;
+    for (const auto& param : params)
+    {
+        if (isFirst) {
+            stream << param;
+            isFirst = false;
+        } else {
+            stream << ", " << param;
+        }
+    }
+
+    stream << ");" << std::endl;
+
+    return stream.str();
+}
+
 std::string Generator::generateFunction(const Function& function)
 {
     std::stringstream stream;
@@ -56,6 +80,8 @@ std::string Generator::generateFunction(const Function& function)
     stream << generateFunctionDefinitionHead(function);
 
     Analyser analyser;
+
+    std::vector <std::string> nextCalledFunctionParameters;
 
     for (const auto& instruction : function.instructions)
     {
@@ -66,7 +92,13 @@ std::string Generator::generateFunction(const Function& function)
         } else if (instruction.operand == "endbr64") {
             continue;
         } else if (instruction.operand == "mov") {
-            if (instruction.arguments[0] == "eax" && isNumber(instruction.arguments[1])) {
+            if (analyser.isParameterRegister(instruction.arguments[0]) && isNumber(instruction.arguments[1])) {
+                nextCalledFunctionParameters.push_back(instruction.arguments[1]);
+                std::string parentRegName = analyser.getParentRegisterName(instruction.arguments[0]);
+                analyser.registerMap[parentRegName].status = RegStatus::IsKnownNumber;
+                analyser.registerMap[parentRegName].value = std::stoi(instruction.arguments[1]);
+            }
+            else if (instruction.arguments[0] == "eax" && isNumber(instruction.arguments[1])) {
                 analyser.registerMap["rax"].status = RegStatus::IsKnownNumber;
                 analyser.registerMap["rax"].value = std::stoi(instruction.arguments[1]);
             } else {
@@ -81,7 +113,8 @@ std::string Generator::generateFunction(const Function& function)
             std::optional<Function> functionOptional =
                     analyser.findFunctionWithAddress(std::stoi(instruction.arguments[0], &pos, 16));
             if (functionOptional.has_value()) {
-                stream << "\t" << functionOptional.value().name << "();" << std::endl;
+                stream << generateFunctionCall(functionOptional.value(), nextCalledFunctionParameters);
+                nextCalledFunctionParameters.clear();
             } else {
                 stream << generateInlineAsm(instruction);
             }

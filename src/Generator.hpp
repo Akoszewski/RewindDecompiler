@@ -13,6 +13,7 @@ private:
     std::string generateInlineAsm(const Instruction& instruction);
     std::string generateFunction(const Function& function);
     std::string generateFunctionDefinitionHead(const Function& function);
+    std::string generateFunctionCall(const Function& function, std::vector<std::string> nextCalledFunParams);
 };
 
 #endif

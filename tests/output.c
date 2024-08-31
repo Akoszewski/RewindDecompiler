@@ -13,9 +13,7 @@ int function1(int arg1, int arg2)
 
 int main()
 {
-	asm("mov esi, 0x5");
-	asm("mov edi, 0x2");
-	function1();
+	function1(0x2, 0x5);
 	asm("lea rax, [rip+0xe98]");
 	asm("mov rdi, rax");
 	puts();
