@@ -11,7 +11,7 @@ public:
     std::string generateCodeFromAsm(const std::string& objdumpAsmCode);
 private:
     std::string generateInlineAsm(const Instruction& instruction);
-    std::string generateFunction(const Function& function);
+    std::string generateFunction(Function& function);
     std::string generateFunctionDefinitionHead(const Function& function);
     std::string generateFunctionCall(const Function& function, std::vector<std::string> nextCalledFunParams);
 };

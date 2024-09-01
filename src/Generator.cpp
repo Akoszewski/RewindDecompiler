@@ -73,7 +73,7 @@ std::string Generator::generateFunctionCall(const Function& function, std::vecto
     return stream.str();
 }
 
-std::string Generator::generateFunction(const Function& function)
+std::string Generator::generateFunction(Function& function)
 {
     std::stringstream stream;
 
@@ -83,8 +83,11 @@ std::string Generator::generateFunction(const Function& function)
 
     std::vector <std::string> nextCalledFunctionParameters;
 
+    int varCounter = 1;
+
     for (const auto& instruction : function.instructions)
     {
+        std::cout << "Instruction: " << instruction.operand << " " << instruction.arguments.size() << std::endl;
         if (analyser.isFromFunctionPrologue(instruction)) {
             continue;
         } else if (analyser.isFromFunctionEpilogueExceptRet(instruction)) {
@@ -102,7 +105,29 @@ std::string Generator::generateFunction(const Function& function)
                 analyser.registerMap["rax"].status = RegStatus::IsKnownNumber;
                 analyser.registerMap["rax"].value = std::stoi(instruction.arguments[1]);
             } else {
-                stream << generateInlineAsm(instruction);
+                bool shouldDeclare = false;
+                std::string parentRegNameLeft = analyser.getParentRegisterName(instruction.arguments[0]);
+                std::string parentRegNameRight = analyser.getParentRegisterName(instruction.arguments[1]);
+                std::string argumentContentLeft = parentRegNameLeft.empty() ? instruction.arguments[0] : parentRegNameLeft;
+                std::string argumentContentRight = parentRegNameLeft.empty() ? instruction.arguments[1] : parentRegNameRight;
+                if (function.aliasMap.find(argumentContentLeft) == function.aliasMap.end()) {
+                    function.aliasMap[argumentContentLeft] = std::string("var") + std::to_string(varCounter);
+                    shouldDeclare = true;
+                    varCounter++;
+                }
+                std::string rvalue;
+                if (!isNumber(argumentContentRight)) {
+                    if (function.aliasMap.find(argumentContentRight) == function.aliasMap.end()) {
+                        function.aliasMap[argumentContentRight] = std::string("var") + std::to_string(varCounter);
+                        varCounter++;
+                    }
+                    rvalue = function.aliasMap[argumentContentRight];
+                } else {
+                    rvalue = argumentContentRight;
+                }
+                std::string typeDeclaration = shouldDeclare ? "int " : "";
+                std::string lvalue = typeDeclaration + function.aliasMap[argumentContentLeft];
+                stream << "\t" << lvalue << " = " << rvalue << ";\n";
             }
         } else if (instruction.operand == "ret") {
             if (analyser.registerMap["rax"].status == RegStatus::IsKnownNumber) {
@@ -133,7 +158,7 @@ std::string Generator::generateCodeFromAsm(const std::string& objdumpAsmCode)
     Parser::getInstance().parseAllFunctions(functionBoundaries);
     
     std::stringstream stream;
-    for (const auto& function : Parser::getInstance().functions)
+    for (auto& function : Parser::getInstance().functions)
     {
         if (function.isDllTrampoline) {
             stream << generateExternalFunctionDeclaration(function);

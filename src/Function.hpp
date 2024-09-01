@@ -5,6 +5,7 @@
 #include "Variable.hpp"
 
 #include <string>
+#include <map>
 
 struct Function
 {
@@ -14,6 +15,7 @@ struct Function
     std::vector<Instruction> instructions;
     std::vector<Variable> parameters;
     bool isDllTrampoline;
+    std::map<std::string, std::string> aliasMap;
 };
 
 #endif

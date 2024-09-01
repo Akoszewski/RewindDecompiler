@@ -5,7 +5,9 @@ echo "Decompiler compiled"
 
 cd tests
 
+# gcc -O0 testcode-simple-variable.c -lm || exit -1
 gcc -O0 testcode-library-fun.c -lm || exit -1
+# gcc -O0 testcode-simple-fun.c -lm || exit -1
 objdump -M intel -d a.out > a.asm
 
 echo "Decompiling file"

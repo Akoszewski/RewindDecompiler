@@ -135,9 +135,12 @@ void Analyser::initFunctionParameters(Function& function)
 
         if (instr.operand == "mov") {
             if (isParameterRegister(instr.arguments[1])) {
-                if (!registerMap[getParentRegisterName(instr.arguments[1])].wasChanged) {
+                std::string parentRegName = getParentRegisterName(instr.arguments[1]);
+                if (!registerMap[parentRegName].wasChanged) {
+                    std::string argName = std::string("arg") + std::to_string(parameterCounter);
                     std::string type = sizeToTypeMap[registerMap[instr.arguments[1]].byteSize];
-                    function.parameters.push_back(Variable{type, std::string("arg") + std::to_string(parameterCounter)});
+                    function.parameters.push_back(Variable{type, argName});
+                    function.aliasMap[parentRegName] = argName;
                     parameterCounter++;
                 }
             }
