@@ -99,14 +99,13 @@ Disassembly of section .text:
     1131:	be 02 00 00 00       	mov    esi,0x2
     1136:	bf 05 00 00 00       	mov    edi,0x5
     113b:	e8 d9 ff ff ff       	call   1119 <function1>
-    1140:	b8 00 00 00 00       	mov    eax,0x0
-    1145:	5d                   	pop    rbp
-    1146:	c3                   	ret
+    1140:	5d                   	pop    rbp
+    1141:	c3                   	ret
 
 Disassembly of section .fini:
 
-0000000000001148 <_fini>:
-    1148:	f3 0f 1e fa          	endbr64
-    114c:	48 83 ec 08          	sub    rsp,0x8
-    1150:	48 83 c4 08          	add    rsp,0x8
-    1154:	c3                   	ret
+0000000000001144 <_fini>:
+    1144:	f3 0f 1e fa          	endbr64
+    1148:	48 83 ec 08          	sub    rsp,0x8
+    114c:	48 83 c4 08          	add    rsp,0x8
+    1150:	c3                   	ret

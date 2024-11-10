@@ -17,6 +17,7 @@ echo "Compiling decompiled file"
 gcc -masm=intel -g -O0 output.c -o output.elf -lm || exit -1
 echo "Launching recompiled file"
 ./output.elf
+echo "The recompiled program returned: $?"
 echo "Decompiling recompiled file"
 objdump -M intel -d output.elf > output.asm
 

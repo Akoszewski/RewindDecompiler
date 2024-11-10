@@ -104,17 +104,19 @@ Disassembly of section .text:
 0000000000001146 <main>:
     1146:	55                   	push   rbp
     1147:	48 89 e5             	mov    rbp,rsp
-    114a:	be 02 00 00 00       	mov    esi,0x2
-    114f:	bf 05 00 00 00       	mov    edi,0x5
-    1154:	e8 c0 ff ff ff       	call   1119 <function1>
-    1159:	b8 00 00 00 00       	mov    eax,0x0
-    115e:	5d                   	pop    rbp
-    115f:	c3                   	ret
+    114a:	48 83 ec 10          	sub    rsp,0x10
+    114e:	be 02 00 00 00       	mov    esi,0x2
+    1153:	bf 05 00 00 00       	mov    edi,0x5
+    1158:	e8 bc ff ff ff       	call   1119 <function1>
+    115d:	89 45 fc             	mov    DWORD PTR [rbp-0x4],eax
+    1160:	8b 45 fc             	mov    eax,DWORD PTR [rbp-0x4]
+    1163:	c9                   	leave
+    1164:	c3                   	ret
 
 Disassembly of section .fini:
 
-0000000000001160 <_fini>:
-    1160:	f3 0f 1e fa          	endbr64
-    1164:	48 83 ec 08          	sub    rsp,0x8
-    1168:	48 83 c4 08          	add    rsp,0x8
-    116c:	c3                   	ret
+0000000000001168 <_fini>:
+    1168:	f3 0f 1e fa          	endbr64
+    116c:	48 83 ec 08          	sub    rsp,0x8
+    1170:	48 83 c4 08          	add    rsp,0x8
+    1174:	c3                   	ret

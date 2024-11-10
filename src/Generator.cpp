@@ -56,7 +56,7 @@ std::string Generator::generateFunctionCall(const Function& function, std::vecto
 
     std::reverse(params.begin(), params.end());
 
-    stream << "\t" << function.name << "(";
+    stream << function.name << "(";
     bool isFirst = true;
     for (const auto& param : params)
     {
@@ -73,11 +73,24 @@ std::string Generator::generateFunctionCall(const Function& function, std::vecto
     return stream.str();
 }
 
-std::string Generator::generateNewVariableName()
+std::string Generator::generateNewVariableName(VariableKind kind)
 {
-    static int varCounter = 0;
-    varCounter++;
-    return std::string("var") + std::to_string(varCounter);
+    static int localVarCounter = 0;
+    static int retVarCounter = 0;
+    std::string result;
+
+    switch (kind)
+    {
+        case VariableKind::LOCAL:
+            localVarCounter++;
+            result = std::string("var") + std::to_string(localVarCounter);
+        break;
+        case VariableKind::RETURN:
+            retVarCounter++;
+            result = std::string("ret") + std::to_string(retVarCounter);
+        break;
+    }
+    return result;
 }
 
 char getSymbol(const std::string& operand)
@@ -166,7 +179,16 @@ std::string Generator::generateFunction(Function& function)
             std::optional<Function> functionOptional =
                     analyser.findFunctionWithAddress(std::stoi(instruction.arguments[0], &pos, 16));
             if (functionOptional.has_value()) {
-                stream << generateFunctionCall(functionOptional.value(), nextCalledFunctionParameters);
+                if (functionOptional.value().type == "void") {
+                    stream << "\t" << generateFunctionCall(functionOptional.value(), nextCalledFunctionParameters);
+                } else {
+                    std::string retVarName = generateNewVariableName(VariableKind::RETURN);
+                    stream << "\t" << functionOptional.value().type << " " << retVarName << " = " << 
+                        generateFunctionCall(functionOptional.value(), nextCalledFunctionParameters);
+                    function.aliasMap["rax"] = retVarName;
+                    analyser.registerMap["rax"].status = RegStatus::IsEqualToOtherUnit;
+                    analyser.registerMap["rax"].value = 0;
+                }
                 nextCalledFunctionParameters.clear();
             } else {
                 stream << generateInlineAsm(instruction);

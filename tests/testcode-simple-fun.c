@@ -5,6 +5,5 @@ int function1(int a, unsigned b)
 
 int main()
 {
-    function1(5, 2);
-    return 0;
+    return function1(5, 2);
 }

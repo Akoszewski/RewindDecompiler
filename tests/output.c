@@ -10,7 +10,7 @@ int function1(int arg1, int arg2)
 
 int main()
 {
-	function1(0x5, 0x2);
-	return 0;
+	int ret1 = function1(0x5, 0x2);
+	return ret1;
 }
 

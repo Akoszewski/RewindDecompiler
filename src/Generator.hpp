@@ -5,6 +5,12 @@
 
 #include <string>
 
+enum class VariableKind
+{
+    LOCAL,
+    RETURN
+};
+
 class Generator
 {
 public:
@@ -14,7 +20,7 @@ private:
     std::string generateFunction(Function& function);
     std::string generateFunctionDefinitionHead(const Function& function);
     std::string generateFunctionCall(const Function& function, std::vector<std::string> nextCalledFunParams);
-    std::string generateNewVariableName();
+    std::string generateNewVariableName(VariableKind kind = VariableKind::LOCAL);
 };
 
 #endif
