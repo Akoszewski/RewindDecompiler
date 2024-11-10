@@ -50,8 +50,10 @@ Analyser::Analyser()
         registerMap[regRecord.second.byteVersionName] =
                 Register(1, qwVerName, dwVerName, wVerName, bVerName, hbVerName);
 
-        registerMap[regRecord.second.highByteVersionName] =
-                Register(1, qwVerName, dwVerName, wVerName, bVerName, hbVerName);
+        if (hbVerName != "") {
+            registerMap[regRecord.second.highByteVersionName] =
+                    Register(1, qwVerName, dwVerName, wVerName, bVerName, hbVerName);
+        }
     }
 }
 

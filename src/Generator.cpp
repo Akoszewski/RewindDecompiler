@@ -73,6 +73,13 @@ std::string Generator::generateFunctionCall(const Function& function, std::vecto
     return stream.str();
 }
 
+std::string Generator::generateNewVariableName()
+{
+    static int varCounter = 0;
+    varCounter++;
+    return std::string("var") + std::to_string(varCounter);
+}
+
 std::string Generator::generateFunction(Function& function)
 {
     std::stringstream stream;
@@ -83,18 +90,16 @@ std::string Generator::generateFunction(Function& function)
 
     std::vector <std::string> nextCalledFunctionParameters;
 
-    int varCounter = 1;
-
     for (const auto& instruction : function.instructions)
     {
-        std::cout << "Instruction: " << instruction.operand << " " << instruction.arguments.size() << std::endl;
+        // std::cout << "Instruction: " << instruction.operand << " " << instruction.arguments.size() << std::endl;
         if (analyser.isFromFunctionPrologue(instruction)) {
             continue;
         } else if (analyser.isFromFunctionEpilogueExceptRet(instruction)) {
             continue;
         } else if (instruction.operand == "endbr64") {
             continue;
-        } else if (instruction.operand == "mov") {
+        } else if (instruction.operand == "mov" || instruction.operand == "movsx") {
             if (analyser.isParameterRegister(instruction.arguments[0]) && isNumber(instruction.arguments[1])) {
                 nextCalledFunctionParameters.push_back(instruction.arguments[1]);
                 std::string parentRegName = analyser.getParentRegisterName(instruction.arguments[0]);
@@ -109,17 +114,15 @@ std::string Generator::generateFunction(Function& function)
                 std::string parentRegNameLeft = analyser.getParentRegisterName(instruction.arguments[0]);
                 std::string parentRegNameRight = analyser.getParentRegisterName(instruction.arguments[1]);
                 std::string argumentContentLeft = parentRegNameLeft.empty() ? instruction.arguments[0] : parentRegNameLeft;
-                std::string argumentContentRight = parentRegNameLeft.empty() ? instruction.arguments[1] : parentRegNameRight;
+                std::string argumentContentRight = parentRegNameRight.empty() ? instruction.arguments[1] : parentRegNameRight;
                 if (function.aliasMap.find(argumentContentLeft) == function.aliasMap.end()) {
-                    function.aliasMap[argumentContentLeft] = std::string("var") + std::to_string(varCounter);
+                    function.aliasMap[argumentContentLeft] = generateNewVariableName();
                     shouldDeclare = true;
-                    varCounter++;
                 }
                 std::string rvalue;
                 if (!isNumber(argumentContentRight)) {
                     if (function.aliasMap.find(argumentContentRight) == function.aliasMap.end()) {
-                        function.aliasMap[argumentContentRight] = std::string("var") + std::to_string(varCounter);
-                        varCounter++;
+                        std::cout << "Could not find alias for: argumentContentRight = " << argumentContentRight << std::endl;
                     }
                     rvalue = function.aliasMap[argumentContentRight];
                 } else {

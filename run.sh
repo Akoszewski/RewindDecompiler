@@ -4,9 +4,10 @@ g++ -g -fsanitize=address src/main.cpp src/FileManager.cpp src/Generator.cpp src
 echo "Decompiler compiled"
 
 cd tests
+rm a.asm output.asm output.c a.out output.elf
 
 # gcc -O0 testcode-simple-variable.c -lm || exit -1
-gcc -O0 testcode-library-fun.c -lm || exit -1
+gcc -O0 testcode-simple-fun.c -lm || exit -1
 # gcc -O0 testcode-simple-fun.c -lm || exit -1
 objdump -M intel -d a.out > a.asm
 
