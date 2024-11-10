@@ -5,6 +5,7 @@ int function1(int arg1, int arg2)
 	int var3 = var1;
 	int var4 = var2;
 	var4 = var4 + var3;
+	return var4;
 }
 
 int main()

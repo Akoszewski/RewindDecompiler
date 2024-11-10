@@ -123,7 +123,7 @@ std::string Generator::generateFunction(Function& function)
                 analyser.registerMap[parentRegName].status = RegStatus::IsKnownNumber;
                 analyser.registerMap[parentRegName].value = std::stoi(instruction.arguments[1]);
             }
-            else if (instruction.arguments[0] == "eax" && isNumber(instruction.arguments[1])) {
+            else if (analyser.getParentRegisterName(instruction.arguments[0]) == "rax" && isNumber(instruction.arguments[1])) {
                 analyser.registerMap["rax"].status = RegStatus::IsKnownNumber;
                 analyser.registerMap["rax"].value = std::stoi(instruction.arguments[1]);
             } else {
@@ -156,6 +156,10 @@ std::string Generator::generateFunction(Function& function)
         } else if (instruction.operand == "ret") {
             if (analyser.registerMap["rax"].status == RegStatus::IsKnownNumber) {
                 stream << "\treturn " << analyser.registerMap["rax"].value << ";" << std::endl;
+            } else {
+                if (function.aliasMap.find("rax") != function.aliasMap.end()) {
+                    stream << "\treturn " << function.aliasMap["rax"] << ";" << std::endl;
+                }
             }
         } else if (instruction.operand == "call" && isHexNumberWithPrefix(instruction.arguments[0])) {
             std::size_t pos = 2;

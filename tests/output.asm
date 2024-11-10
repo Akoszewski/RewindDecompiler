@@ -27,7 +27,7 @@ Disassembly of section .text:
     1032:	54                   	push   rsp
     1033:	45 31 c0             	xor    r8d,r8d
     1036:	31 c9                	xor    ecx,ecx
-    1038:	48 8d 3d 05 01 00 00 	lea    rdi,[rip+0x105]        # 1144 <main>
+    1038:	48 8d 3d 07 01 00 00 	lea    rdi,[rip+0x107]        # 1146 <main>
     103f:	ff 15 7b 2f 00 00    	call   QWORD PTR [rip+0x2f7b]        # 3fc0 <__libc_start_main@GLIBC_2.34>
     1045:	f4                   	hlt
     1046:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
@@ -97,19 +97,19 @@ Disassembly of section .text:
     1138:	89 45 fc             	mov    DWORD PTR [rbp-0x4],eax
     113b:	8b 45 f8             	mov    eax,DWORD PTR [rbp-0x8]
     113e:	01 45 fc             	add    DWORD PTR [rbp-0x4],eax
-    1141:	90                   	nop
-    1142:	5d                   	pop    rbp
-    1143:	c3                   	ret
+    1141:	8b 45 fc             	mov    eax,DWORD PTR [rbp-0x4]
+    1144:	5d                   	pop    rbp
+    1145:	c3                   	ret
 
-0000000000001144 <main>:
-    1144:	55                   	push   rbp
-    1145:	48 89 e5             	mov    rbp,rsp
-    1148:	be 02 00 00 00       	mov    esi,0x2
-    114d:	bf 05 00 00 00       	mov    edi,0x5
-    1152:	e8 c2 ff ff ff       	call   1119 <function1>
-    1157:	b8 00 00 00 00       	mov    eax,0x0
-    115c:	5d                   	pop    rbp
-    115d:	c3                   	ret
+0000000000001146 <main>:
+    1146:	55                   	push   rbp
+    1147:	48 89 e5             	mov    rbp,rsp
+    114a:	be 02 00 00 00       	mov    esi,0x2
+    114f:	bf 05 00 00 00       	mov    edi,0x5
+    1154:	e8 c0 ff ff ff       	call   1119 <function1>
+    1159:	b8 00 00 00 00       	mov    eax,0x0
+    115e:	5d                   	pop    rbp
+    115f:	c3                   	ret
 
 Disassembly of section .fini:
 
