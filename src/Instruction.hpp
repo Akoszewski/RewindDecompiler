@@ -17,6 +17,7 @@ struct Instruction
     int address;
     std::string operand;
     std::vector<std::string> arguments;
+    std::vector<std::string> comment;
 };
 
 #endif

@@ -110,18 +110,21 @@ Function Parser::parseFunction(std::pair<int, int> functionBoundary)
             if (!instruction.operand.empty()) {
                 function.instructions.emplace_back(instruction);
             }
+            instruction.comment.clear();
             continue;
         }
 
         if (tokens[i] == "#" || tokens[i][0] == '<') {
             while (tokens[i] != "\n")
             {
+                instruction.comment.push_back(tokens[i]);
                 i++;
             }
             finalizeInstructionInitialization(instruction, initTempData);
             if (!instruction.operand.empty()) {
                 function.instructions.emplace_back(instruction);
             }
+            instruction.comment.clear();
             continue;
         }
 

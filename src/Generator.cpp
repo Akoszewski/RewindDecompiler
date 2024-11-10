@@ -109,6 +109,13 @@ char getSymbol(const std::string& operand)
     return ' ';
 }
 
+std::string getCStringFromAddress(const std::string comment)
+{
+    std::string res = "\"Extracted string\"";
+    std::cout << "The string from rodata: " << res << " " << "Disk address: " << comment[1] << std::endl;
+    return res;
+}
+
 std::string Generator::generateFunction(Function& function)
 {
     std::stringstream stream;
@@ -121,6 +128,7 @@ std::string Generator::generateFunction(Function& function)
 
     for (const auto& instruction : function.instructions)
     {
+        std::string instructionType = "int";
         // std::cout << "Instruction: " << instruction.operand << " " << instruction.arguments.size() << std::endl;
         if (analyser.isFromFunctionPrologue(instruction)) {
             continue;
@@ -150,15 +158,23 @@ std::string Generator::generateFunction(Function& function)
                     shouldDeclare = true;
                 }
                 std::string rvalue;
-                if (!isNumber(argumentContentRight)) {
-                    if (function.aliasMap.find(argumentContentRight) == function.aliasMap.end()) {
-                        std::cout << "Error: Could not find alias for: argumentContentRight = " << argumentContentRight << std::endl;
-                    }
-                    rvalue = function.aliasMap[argumentContentRight];
-                } else {
-                    rvalue = argumentContentRight;
+                if (instruction.operand == "lea")
+                {
+                    rvalue = getCStringFromAddress(instruction.comment[0]);
                 }
-                std::string typeDeclaration = shouldDeclare ? "int " : "";
+                else
+                {
+                    if (!isNumber(argumentContentRight)) {
+                        if (function.aliasMap.find(argumentContentRight) == function.aliasMap.end()) {
+                            std::cout << "Error: Could not find alias for: argumentContentRight = " << argumentContentRight << std::endl;
+                        }
+                        rvalue = function.aliasMap[argumentContentRight];
+                    } else {
+                        rvalue = argumentContentRight;
+                    }
+                }
+                std::string typeDeclaration = shouldDeclare ? instructionType + std::string(" ") : "";
+
                 std::string lvalue = typeDeclaration + function.aliasMap[argumentContentLeft];
                 if (getSymbol(instruction.operand) == '=') {
                     stream << "\t" << lvalue << " = " << rvalue << ";\n";
