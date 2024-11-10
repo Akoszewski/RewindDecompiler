@@ -27,7 +27,7 @@ Disassembly of section .text:
     1032:	54                   	push   rsp
     1033:	45 31 c0             	xor    r8d,r8d
     1036:	31 c9                	xor    ecx,ecx
-    1038:	48 8d 3d 01 01 00 00 	lea    rdi,[rip+0x101]        # 1140 <main>
+    1038:	48 8d 3d 05 01 00 00 	lea    rdi,[rip+0x105]        # 1144 <main>
     103f:	ff 15 7b 2f 00 00    	call   QWORD PTR [rip+0x2f7b]        # 3fc0 <__libc_start_main@GLIBC_2.34>
     1045:	f4                   	hlt
     1046:	66 2e 0f 1f 84 00 00 	cs nop WORD PTR [rax+rax*1+0x0]
@@ -95,25 +95,26 @@ Disassembly of section .text:
     1132:	89 45 f8             	mov    DWORD PTR [rbp-0x8],eax
     1135:	8b 45 f4             	mov    eax,DWORD PTR [rbp-0xc]
     1138:	89 45 fc             	mov    DWORD PTR [rbp-0x4],eax
-    113b:	01 d0                	add    eax,edx
-    113d:	90                   	nop
-    113e:	5d                   	pop    rbp
-    113f:	c3                   	ret
+    113b:	8b 45 f8             	mov    eax,DWORD PTR [rbp-0x8]
+    113e:	01 45 fc             	add    DWORD PTR [rbp-0x4],eax
+    1141:	90                   	nop
+    1142:	5d                   	pop    rbp
+    1143:	c3                   	ret
 
-0000000000001140 <main>:
-    1140:	55                   	push   rbp
-    1141:	48 89 e5             	mov    rbp,rsp
-    1144:	be 02 00 00 00       	mov    esi,0x2
-    1149:	bf 05 00 00 00       	mov    edi,0x5
-    114e:	e8 c6 ff ff ff       	call   1119 <function1>
-    1153:	b8 00 00 00 00       	mov    eax,0x0
-    1158:	5d                   	pop    rbp
-    1159:	c3                   	ret
+0000000000001144 <main>:
+    1144:	55                   	push   rbp
+    1145:	48 89 e5             	mov    rbp,rsp
+    1148:	be 02 00 00 00       	mov    esi,0x2
+    114d:	bf 05 00 00 00       	mov    edi,0x5
+    1152:	e8 c2 ff ff ff       	call   1119 <function1>
+    1157:	b8 00 00 00 00       	mov    eax,0x0
+    115c:	5d                   	pop    rbp
+    115d:	c3                   	ret
 
 Disassembly of section .fini:
 
-000000000000115c <_fini>:
-    115c:	f3 0f 1e fa          	endbr64
-    1160:	48 83 ec 08          	sub    rsp,0x8
-    1164:	48 83 c4 08          	add    rsp,0x8
-    1168:	c3                   	ret
+0000000000001160 <_fini>:
+    1160:	f3 0f 1e fa          	endbr64
+    1164:	48 83 ec 08          	sub    rsp,0x8
+    1168:	48 83 c4 08          	add    rsp,0x8
+    116c:	c3                   	ret

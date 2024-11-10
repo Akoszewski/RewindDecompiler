@@ -4,7 +4,7 @@ int function1(int arg1, int arg2)
 	int var2 = arg2;
 	int var3 = var1;
 	int var4 = var2;
-	asm("add eax, edx");
+	var4 = var4 + var3;
 }
 
 int main()

@@ -80,6 +80,22 @@ std::string Generator::generateNewVariableName()
     return std::string("var") + std::to_string(varCounter);
 }
 
+char getSymbol(const std::string& operand)
+{
+    if (operand == "mov" || operand == "movsx" || operand == "movzx") {
+        return '=';
+    } else if (operand == "add") {
+        return '+';
+    } else if (operand == "sub") {
+        return '-';
+    } else if (operand == "mul" || operand == "imul") {
+        return '*';
+    } else if (operand == "div" || operand == "idiv") {
+        return '/';
+    }
+    return ' ';
+}
+
 std::string Generator::generateFunction(Function& function)
 {
     std::stringstream stream;
@@ -99,7 +115,8 @@ std::string Generator::generateFunction(Function& function)
             continue;
         } else if (instruction.operand == "endbr64") {
             continue;
-        } else if (instruction.operand == "mov" || instruction.operand == "movsx") {
+        // } else if (instruction.operand == "mov" || instruction.operand == "movsx") {
+        } else if (instruction.arguments.size() == 2) {
             if (analyser.isParameterRegister(instruction.arguments[0]) && isNumber(instruction.arguments[1])) {
                 nextCalledFunctionParameters.push_back(instruction.arguments[1]);
                 std::string parentRegName = analyser.getParentRegisterName(instruction.arguments[0]);
@@ -122,7 +139,7 @@ std::string Generator::generateFunction(Function& function)
                 std::string rvalue;
                 if (!isNumber(argumentContentRight)) {
                     if (function.aliasMap.find(argumentContentRight) == function.aliasMap.end()) {
-                        std::cout << "Could not find alias for: argumentContentRight = " << argumentContentRight << std::endl;
+                        std::cout << "Error: Could not find alias for: argumentContentRight = " << argumentContentRight << std::endl;
                     }
                     rvalue = function.aliasMap[argumentContentRight];
                 } else {
@@ -130,7 +147,11 @@ std::string Generator::generateFunction(Function& function)
                 }
                 std::string typeDeclaration = shouldDeclare ? "int " : "";
                 std::string lvalue = typeDeclaration + function.aliasMap[argumentContentLeft];
-                stream << "\t" << lvalue << " = " << rvalue << ";\n";
+                if (getSymbol(instruction.operand) == '=') {
+                    stream << "\t" << lvalue << " = " << rvalue << ";\n";
+                } else {
+                    stream << "\t" << lvalue << " = " << function.aliasMap[argumentContentLeft] << " " << getSymbol(instruction.operand) << " " << rvalue << ";\n";
+                }
             }
         } else if (instruction.operand == "ret") {
             if (analyser.registerMap["rax"].status == RegStatus::IsKnownNumber) {
