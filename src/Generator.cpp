@@ -127,20 +127,17 @@ std::string getCStringFromAddress(const long long& address)
     std::vector<unsigned char>& rodataBytes = Parser::getInstance().rodataBytes;
     std::string extractedString;
 
-    std::cout << "address: " << address << std::endl;
     for (int i = address - rodataAddress;; i++)
     {
         if (rodataBytes[i] == 0)
         {
             break;
         }
-        std::cout << "RodataByte: " << rodataBytes[i] << std::endl;
         extractedString += rodataBytes[i];
     }
     replaceNewlineWithLiteral(extractedString);
 
     std::string res = "\"" + extractedString + "\"";
-    std::cout << "The string from rodata: " << res << " " << "Disk address: " << address << std::endl;
     return res;
 }
 
@@ -188,7 +185,8 @@ std::string Generator::generateFunction(Function& function)
                 if (instruction.operand == "lea")
                 {
                     std::cout << "instruction.comment[1]: " << instruction.comment[1] << std::endl;
-                    rvalue = getCStringFromAddress(std::stoll(instruction.comment[1]));
+                    rvalue = "(int)" + getCStringFromAddress(std::stoll(instruction.comment[1]));
+                    std::cout << "rvalue = " << rvalue << std::endl;
                 }
                 else
                 {
