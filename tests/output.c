@@ -15,7 +15,7 @@ int function1(int arg1, int arg2)
 int main()
 {
 	int ret1 = function1(0x2, 0x5);
-	ret1 = ret1   "asdsf\n";
+	ret1 = "asdsf\n";
 	int var5 = ret1;
 	 ret2 = puts();
 	return 0;

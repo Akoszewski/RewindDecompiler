@@ -95,7 +95,7 @@ std::string Generator::generateNewVariableName(VariableKind kind)
 
 char getSymbol(const std::string& operand)
 {
-    if (operand == "mov" || operand == "movsx" || operand == "movzx") {
+    if (operand == "mov" || operand == "movsx" || operand == "movzx" || operand == "lea") {
         return '=';
     } else if (operand == "add") {
         return '+';
