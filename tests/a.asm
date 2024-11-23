@@ -1,8 +1,8 @@
 
-a.out:     file format elf64-x86-64
+a.out: | file format elf64-x86-64
 
 Contents of section .rodata:
- 2000 01000200 61736466 0a00               ....asdf..      
+ 2000 01000200 61736473 660a00 | ....asdsf.. | 
 
 a.out:     file format elf64-x86-64
 

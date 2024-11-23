@@ -15,9 +15,11 @@ public:
     void Tokenize(const std::string& asmCode);
     std::vector<std::pair<int, int>> findFunctionBoundaries();
     Function parseFunction(std::pair<int, int> functionBoundary);
+    void parseRodata();
     void parseAllFunctions(std::vector<std::pair<int, int>> functionBoundaries);
     std::optional<Function> findFunctionWithName(const std::string& name);
     std::vector<Function> functions;
+    std::vector<unsigned char> rodataBytes;
 private:
     Parser() = default;
     std::vector<std::pair<int, int>> findFunctionBoundariesInNonStripped();

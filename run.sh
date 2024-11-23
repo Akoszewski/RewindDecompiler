@@ -9,7 +9,7 @@ rm a.asm output.asm output.c a.out output.elf rodata.txt
 # gcc -O0 testcode-simple-variable.c -lm || exit -1
 gcc -O0 testcode-library-fun.c -lm || exit -1
 # gcc -O0 testcode-simple-fun.c -lm || exit -1
-objdump -s -j .rodata a.out > a.asm
+objdump -s -j .rodata a.out | awk '{gsub(/[ ]{2,}/, " | "); print}' > a.asm
 objdump -M intel -d a.out >> a.asm
 
 

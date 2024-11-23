@@ -5,10 +5,9 @@ int function1(int a, char b)
 {
     return a - b;
 }
-
 int main()
 {
     function1(2, 5);
-    puts("asdf\n");
+    puts("asdsf\n");
     return 0;
 }

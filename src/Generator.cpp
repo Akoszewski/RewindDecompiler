@@ -109,10 +109,38 @@ char getSymbol(const std::string& operand)
     return ' ';
 }
 
-std::string getCStringFromAddress(const std::string comment)
+void replaceNewlineWithLiteral(std::string& input)
 {
-    std::string res = "\"Extracted string\"";
-    std::cout << "The string from rodata: " << res << " " << "Disk address: " << comment[1] << std::endl;
+    const std::string literalNewline = "\\n";
+    size_t pos = 0;
+
+    while ((pos = input.find('\n', pos)) != std::string::npos)
+    {
+        input.replace(pos, 1, literalNewline);
+        pos += literalNewline.length();
+    }
+}
+
+std::string getCStringFromAddress(const long long& address)
+{
+    const int rodataAddress = 2000;
+    std::vector<unsigned char>& rodataBytes = Parser::getInstance().rodataBytes;
+    std::string extractedString;
+
+    std::cout << "address: " << address << std::endl;
+    for (int i = address - rodataAddress;; i++)
+    {
+        if (rodataBytes[i] == 0)
+        {
+            break;
+        }
+        std::cout << "RodataByte: " << rodataBytes[i] << std::endl;
+        extractedString += rodataBytes[i];
+    }
+    replaceNewlineWithLiteral(extractedString);
+
+    std::string res = "\"" + extractedString + "\"";
+    std::cout << "The string from rodata: " << res << " " << "Disk address: " << address << std::endl;
     return res;
 }
 
@@ -129,7 +157,6 @@ std::string Generator::generateFunction(Function& function)
     for (const auto& instruction : function.instructions)
     {
         std::string instructionType = "int";
-        // std::cout << "Instruction: " << instruction.operand << " " << instruction.arguments.size() << std::endl;
         if (analyser.isFromFunctionPrologue(instruction)) {
             continue;
         } else if (analyser.isFromFunctionEpilogueExceptRet(instruction)) {
@@ -160,7 +187,8 @@ std::string Generator::generateFunction(Function& function)
                 std::string rvalue;
                 if (instruction.operand == "lea")
                 {
-                    rvalue = getCStringFromAddress(instruction.comment[0]);
+                    std::cout << "instruction.comment[1]: " << instruction.comment[1] << std::endl;
+                    rvalue = getCStringFromAddress(std::stoll(instruction.comment[1]));
                 }
                 else
                 {
@@ -222,7 +250,8 @@ std::string Generator::generateCodeFromAsm(const std::string& objdumpAsmCode)
     Parser::getInstance().Tokenize(objdumpAsmCode);
     std::vector<std::pair<int, int>> functionBoundaries = Parser::getInstance().findFunctionBoundaries();
     Parser::getInstance().parseAllFunctions(functionBoundaries);
-    
+    Parser::getInstance().parseRodata();
+
     std::stringstream stream;
     for (auto& function : Parser::getInstance().functions)
     {

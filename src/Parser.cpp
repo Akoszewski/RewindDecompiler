@@ -224,3 +224,56 @@ std::vector<std::pair<int, int>> Parser::findFunctionBoundariesInNonStripped()
     }
     return functionBoundaries;
 }
+
+void addRodataBytesFromToken(std::vector<unsigned char>& rodataBytes, const std::string& token)
+{
+    for (int i = 0; i < token.size() && i < 8; i += 2)
+    {
+        std::string byteStr = token.substr(i, 2);
+        std::cout << byteStr <<std::endl;
+        rodataBytes.push_back(static_cast<unsigned char>(std::stoi(byteStr, nullptr, 16)));
+    }
+}
+
+void Parser::parseRodata()
+{
+    bool rodataFound = false;
+    int tokenCounter = 0;
+    for (int i = 0;;i++)
+    {
+        if (tokens[i] == ".rodata:")
+        {
+            rodataFound = true;
+            continue;
+        }
+        if (rodataFound)
+        {
+            if (tokens[i] == "a.out:")
+            {
+                break;
+            }
+            else if (tokens[i] == "\n")
+            {
+                tokenCounter = 0;
+                continue;
+            }
+            if (tokens[i-1] == "\n") // This is address at the beginning of line
+            {
+                continue;
+            }
+            else
+            {
+                std::cout << "Token: " << tokens[i] << std::endl;
+                addRodataBytesFromToken(rodataBytes, tokens[i]);
+                tokenCounter++;
+            }
+            if (tokenCounter > 3 || tokens[i+1] == "|")
+            {
+                while (tokens[i] != "\n")
+                {
+                    i++;
+                }
+            }
+        }
+    }
+}
